@@ -1,12 +1,30 @@
 {
-  "sections": [
-    {
-      "name": "Nervous System",
-      "file": "nervous_system.json"
-    },
-    {
-      "name": "Git Anatomy",
-      "file": "git_anatomy.json"
-    }
-  ]
+    "sections": [
+        {
+            "name": "Nervous System",
+            "subsections": [
+                {
+                    "name": "Central Nervous System",
+                    "file": "nervous_system.json"
+                },
+                {
+                    "name": "Peripheral Nervous System",
+                    "file": "nervous_system.json"
+                }
+            ]
+        },
+        {
+            "name": "Git Anatomy",
+            "subsections": [
+                {
+                    "name": "Basic Commands",
+                    "file": "git_anatomy.json"
+                },
+                {
+                    "name": "Advanced Commands",
+                    "file": "git_anatomy.json"
+                }
+            ]
+        }
+    ]
 }
