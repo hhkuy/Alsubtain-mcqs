@@ -1,59 +1,69 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
-    const category = path.split('/')[path.split('/').length - 2];
-    loadQuizData(category);
-});
+let currentSection = null;
+let questions = [];
+const contentDiv = document.getElementById("content");
+const backButton = document.getElementById("back-button");
+const mainTitle = document.getElementById("main-title");
 
-async function loadQuizData(category) {
-    try {
-        const response = await fetch(`categories/${category}/updates.json`);
-        const quizData = await response.json();
-        displayQuiz(quizData);
-    } catch (error) {
-        console.error('خطأ في جلب بيانات الاختبار:', error);
-    }
+async function loadSections() {
+  const response = await fetch("sections.json");
+  const data = await response.json();
+  showSections(data.sections);
 }
 
-function displayQuiz(quizData) {
-    const form = document.getElementById('quiz-form');
-    quizData.forEach((q, index) => {
-        const questionDiv = document.createElement('div');
-        questionDiv.classList.add('question-container');
+function showSections(sections) {
+  contentDiv.innerHTML = "";
+  mainTitle.textContent = "Select a Section";
 
-        const questionTitle = document.createElement('h3');
-        questionTitle.textContent = `${index + 1}. ${q.question}`;
-        questionDiv.appendChild(questionTitle);
-
-        q.options.forEach((option, i) => {
-            const optionLabel = document.createElement('label');
-            const optionInput = document.createElement('input');
-            optionInput.type = 'radio';
-            optionInput.name = `question-${index}`;
-            optionInput.value = i;
-            optionLabel.appendChild(optionInput);
-            optionLabel.appendChild(document.createTextNode(option));
-            questionDiv.appendChild(optionLabel);
-            questionDiv.appendChild(document.createElement('br'));
-        });
-
-        form.appendChild(questionDiv);
-    });
+  sections.forEach(section => {
+    const button = document.createElement("button");
+    button.textContent = section.name;
+    button.onclick = () => loadQuestions(section.file);
+    contentDiv.appendChild(button);
+  });
 }
 
-function submitQuiz() {
-    const path = window.location.pathname;
-    const category = path.split('/')[path.split('/').length - 2];
-    fetch(`categories/${category}/updates.json`)
-        .then(response => response.json())
-        .then(quizData => {
-            let score = 0;
-            quizData.forEach((q, index) => {
-                const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-                if (selected && parseInt(selected.value) === q.answer) {
-                    score++;
-                }
-            });
-            document.getElementById('result').textContent = `لقد أجبت على ${score} من أصل ${quizData.length} بشكل صحيح.`;
-        })
-        .catch(error => console.error('خطأ في معالجة الاختبار:', error));
+async function loadQuestions(file) {
+  currentSection = file;
+  const response = await fetch(`data/${file}`);
+  const data = await response.json();
+  questions = data.questions;
+  showQuestions();
 }
+
+function showQuestions() {
+  contentDiv.innerHTML = "";
+  mainTitle.textContent = `Questions for ${currentSection}`;
+  backButton.style.display = "block";
+
+  questions.forEach((q, index) => {
+    const questionDiv = document.createElement("div");
+    questionDiv.innerHTML = `
+      <h3>Question ${index + 1}</h3>
+      <p>${q.question}</p>
+      <ul>
+        ${q.options.map((option, i) => `
+          <li>
+            <input type="radio" name="q${index}" id="q${index}o${i}" value="${i}">
+            <label for="q${index}o${i}">${option}</label>
+          </li>
+        `).join("")}
+      </ul>
+      <button onclick="showAnswer(${index})">Show Answer</button>
+      <p id="answer-${index}" style="display:none;color:green;">Answer: ${q.explanation}</p>
+    `;
+    contentDiv.appendChild(questionDiv);
+  });
+}
+
+function showAnswer(index) {
+  document.getElementById(`answer-${index}`).style.display = "block";
+}
+
+backButton.onclick = () => {
+  currentSection = null;
+  questions = [];
+  backButton.style.display = "none";
+  loadSections();
+};
+
+loadSections();
