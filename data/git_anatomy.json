@@ -1,0 +1,26 @@
+[
+    {
+        "question": "What command is used to initialize a new Git repository?",
+        "options": [
+            "git init",
+            "git start",
+            "git new",
+            "git create"
+        ],
+        "answer": 0,
+        "answerText": "git init",
+        "explanation": "The 'git init' command is used to initialize a new Git repository."
+    },
+    {
+        "question": "What command is used to stage all changes in the working directory?",
+        "options": [
+            "git add .",
+            "git stage .",
+            "git commit .",
+            "git push ."
+        ],
+        "answer": 0,
+        "answerText": "git add .",
+        "explanation": "The 'git add .' command stages all changes in the working directory."
+    }
+]
