@@ -1,0 +1,12 @@
+{
+  "sections": [
+    {
+      "name": "Nervous System",
+      "file": "nervous_system.json"
+    },
+    {
+      "name": "Git Anatomy",
+      "file": "git_anatomy.json"
+    }
+  ]
+}
