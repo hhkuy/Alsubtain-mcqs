@@ -1,69 +1,61 @@
-let currentSection = null;
-let questions = [];
-const contentDiv = document.getElementById("content");
-const backButton = document.getElementById("back-button");
-const mainTitle = document.getElementById("main-title");
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('sections.json')
+        .then(response => response.json())
+        .then(data => {
+            const mainSection = document.getElementById('main-section');
+            data.sections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.classList.add('subsection');
+                sectionDiv.innerHTML = `<h3>${section.name}</h3>`;
+                section.subsections.forEach(subsection => {
+                    const button = document.createElement('button');
+                    button.textContent = subsection.name;
+                    button.onclick = () => loadQuiz(subsection.file);
+                    sectionDiv.appendChild(button);
+                });
+                mainSection.appendChild(sectionDiv);
+            });
+        });
+});
 
-async function loadSections() {
-  const response = await fetch("sections.json");
-  const data = await response.json();
-  showSections(data.sections);
+function loadQuiz(file) {
+    fetch(`data/${file}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('quiz-title').textContent = file.replace('_', ' ').replace('.json', '') + ' Quiz';
+            document.getElementById('total-questions').textContent = data.length;
+            const quizForm = document.getElementById('quiz-form');
+            quizForm.innerHTML = '';
+            data.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.innerHTML = `
+                    <p>${index + 1}. ${question.question}</p>
+                    ${question.options.map((option, i) => `
+                        <label>
+                            <input type="radio" name="question${index}" value="${i}">
+                            ${option}
+                        </label><br>
+                    `).join('')}
+                `;
+                quizForm.appendChild(questionDiv);
+            });
+            document.getElementById('quiz-container').style.display = 'block';
+        });
 }
 
-function showSections(sections) {
-  contentDiv.innerHTML = "";
-  mainTitle.textContent = "Select a Section";
-
-  sections.forEach(section => {
-    const button = document.createElement("button");
-    button.textContent = section.name;
-    button.onclick = () => loadQuestions(section.file);
-    contentDiv.appendChild(button);
-  });
+function showResult() {
+    const quizForm = document.getElementById('quiz-form');
+    const resultDiv = document.getElementById('result');
+    let score = 0;
+    const questions = quizForm.querySelectorAll('div');
+    questions.forEach((question, index) => {
+        const selectedOption = question.querySelector('input:checked');
+        if (selectedOption) {
+            const selectedValue = parseInt(selectedOption.value);
+            if (selectedValue === data[index].answer) {
+                score++;
+            }
+        }
+    });
+    resultDiv.innerHTML = `Your score is ${score} out of ${questions.length}.`;
 }
-
-async function loadQuestions(file) {
-  currentSection = file;
-  const response = await fetch(`data/${file}`);
-  const data = await response.json();
-  questions = data.questions;
-  showQuestions();
-}
-
-function showQuestions() {
-  contentDiv.innerHTML = "";
-  mainTitle.textContent = `Questions for ${currentSection}`;
-  backButton.style.display = "block";
-
-  questions.forEach((q, index) => {
-    const questionDiv = document.createElement("div");
-    questionDiv.innerHTML = `
-      <h3>Question ${index + 1}</h3>
-      <p>${q.question}</p>
-      <ul>
-        ${q.options.map((option, i) => `
-          <li>
-            <input type="radio" name="q${index}" id="q${index}o${i}" value="${i}">
-            <label for="q${index}o${i}">${option}</label>
-          </li>
-        `).join("")}
-      </ul>
-      <button onclick="showAnswer(${index})">Show Answer</button>
-      <p id="answer-${index}" style="display:none;color:green;">Answer: ${q.explanation}</p>
-    `;
-    contentDiv.appendChild(questionDiv);
-  });
-}
-
-function showAnswer(index) {
-  document.getElementById(`answer-${index}`).style.display = "block";
-}
-
-backButton.onclick = () => {
-  currentSection = null;
-  questions = [];
-  backButton.style.display = "none";
-  loadSections();
-};
-
-loadSections();
