@@ -1,16 +1,26 @@
-{
-  "questions": [
+[
     {
-      "question": "Each gamete contains a …..…… number of …..….. chromosomes.",
-      "options": ["Diploid - 46", "Haploid - 23", "Polyploid - 69", "Triploid - 69"],
-      "answer": 1,
-      "explanation": "Gametes are haploid cells, meaning they contain 23 chromosomes."
+        "question": "Each gamete contains a …..…… number of …..….. chromosomes.",
+        "options": [
+            "Diploid - 46",
+            "Haploid - 23",
+            "Polyploid - 69",
+            "Triploid - 69"
+        ],
+        "answer": 1,
+        "answerText": "Haploid - 23",
+        "explanation": "Gametes are haploid cells, meaning they contain half the chromosome number of a typical body cell, totaling 23 chromosomes."
     },
     {
-      "question": "During meiosis, one ………..... gives rise to four daughter cells, each with 22 plus 1 X chromosomes.",
-      "options": ["Secondary oocyte", "Spermatid", "Primary oocyte", "Zygote"],
-      "answer": 2,
-      "explanation": "The primary oocyte undergoes meiosis, producing four haploid cells."
+        "question": "During meiosis, one ………..... gives rise to four daughter cells, each with 22 plus 1 X chromosomes.",
+        "options": [
+            "Secondary oocyte",
+            "Spermatid",
+            "Primary oocyte",
+            "Zygote"
+        ],
+        "answer": 2,
+        "answerText": "Primary oocyte",
+        "explanation": "The primary oocyte undergoes meiosis, producing four haploid daughter cells with 22 autosomes and one sex chromosome (X)."
     }
-  ]
-}
+]
